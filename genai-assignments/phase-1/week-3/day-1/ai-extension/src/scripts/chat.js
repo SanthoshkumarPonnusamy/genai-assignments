@@ -123,7 +123,17 @@ class ChatUI {
                     }
                 }
                 const port = chrome.tabs.connect(tab.id);
+                // Listen for inspector state updates from content script
+                port.onMessage.addListener((message) => {
+                    if (message && message.type === 'INSPECTOR_STATE') {
+                        this.isInspecting = !!message.isActive;
+                        if (message.hasContent) this.inspectorButton.classList.add('has-content');
+                        else this.inspectorButton.classList.remove('has-content');
+                        this.updateInspectorButtonState();
+                    }
+                });
                 port.postMessage({ type: 'TOGGLE_INSPECTOR', reset: true });
+                // Immediate UI update for instant feedback (defensive fix for non-extension environments)
                 this.isInspecting = !this.isInspecting;
                 this.updateInspectorButtonState();
             } catch (error) {
@@ -556,38 +566,46 @@ class ChatUI {
         // Extract selected generation modes
         const isFeatureChecked = checkboxes.some(box => box.value === 'FEATURE');
         const isPageChecked = checkboxes.some(box => box.value === 'PAGE');
+        const isTestChecked = checkboxes.some(box => box.value === 'TEST');
 
         // Validate that at least one option is selected
-        if (!isFeatureChecked && !isPageChecked) {
+        if (!isFeatureChecked && !isPageChecked && !isTestChecked) {
             console.warn('No generation mode selected. Defaulting to Page Object generation.');
-            // Default fallback to page object generation
+            // Default fallback to page object generation for supported combos
             if (this.isJavaSelenium(lang, eng)) {
                 promptKeys.push('SELENIUM_JAVA_PAGE_ONLY');
             }
             return promptKeys;
         }
 
-        // Generate appropriate prompt keys based on selections and language/engine combination
+        // Feature / Page combinations (existing behavior)
         if (isFeatureChecked && isPageChecked) {
-            // Both feature and page selected - generate combined output
             if (this.isJavaSelenium(lang, eng)) {
                 promptKeys.push('CUCUMBER_WITH_SELENIUM_JAVA_STEPS');
             } else if (this.isCSharpSelenium(lang, eng)) {
                 promptKeys.push('CUCUMBER_WITH_SELENIUM_CSHARP_STEPS');
             } else {
-                // For unsupported combinations, generate feature only and show a warning
                 promptKeys.push('CUCUMBER_ONLY');
                 this.addUnsupportedLanguageMessage(lang, eng);
             }
         } else if (isFeatureChecked) {
-            // Feature file only
             promptKeys.push('CUCUMBER_ONLY');
         } else if (isPageChecked) {
-            // Page object only
             if (this.isJavaSelenium(lang, eng)) {
                 promptKeys.push('SELENIUM_JAVA_PAGE_ONLY');
             } else if (this.isCSharpSelenium(lang, eng)) {
                 promptKeys.push('SELENIUM_CSHARP_PAGE_ONLY');
+            } else {
+                this.addUnsupportedLanguageMessage(lang, eng);
+            }
+        }
+
+        // If Test Script checkbox selected, append corresponding test-class prompts
+        if (isTestChecked) {
+            if (this.isJavaSelenium(lang, eng)) {
+                if (!promptKeys.includes('SELENIUM_JAVA_TEST_CLASS')) promptKeys.push('SELENIUM_JAVA_TEST_CLASS');
+            } else if (this.isCSharpSelenium(lang, eng)) {
+                if (!promptKeys.includes('SELENIUM_CSHARP_TEST_CLASS')) promptKeys.push('SELENIUM_CSHARP_TEST_CLASS');
             } else {
                 this.addUnsupportedLanguageMessage(lang, eng);
             }

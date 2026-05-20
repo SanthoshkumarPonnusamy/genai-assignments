@@ -209,9 +209,27 @@ button:disabled { opacity:0.6; cursor:not-allowed; }
 .message-actions button { background:none; border:none; color:var(--color-accent); cursor:pointer; font-size:11px; display:flex; align-items:center; gap:6px; padding:4px 8px; }
 .message-actions button:hover { background:var(--color-panel-bg); }
 
-.reset-button { display:none; background-color:var(--color-darker-bg); color:var(--color-white); border:none; padding:8px 16px; border-radius:4px; cursor:pointer; align-items:center; gap:8px; font-size:14px; transition:background-color 0.2s; }
+.reset-button {
+    display:none;
+    background: linear-gradient(135deg, var(--color-gradient-start) 40%, var(--color-accent) 100%);
+    color: white;
+    border: 1px solid var(--color-border-white);
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px var(--color-shadow);
+}
 .reset-button.visible { display:flex; }
-.reset-button:hover { background-color:var(--color-panel-bg); }
+.reset-button:hover {
+    background: linear-gradient(135deg, var(--color-gradient-start) 40%, var(--color-accent) 100%);
+}
 .reset-button i { font-size:12px; }
 
 .initial-message { padding:16px; font-size:15px; color:var(--color-accent); background:rgba(255,107,43,0.1); border-radius:8px; margin:12px 0; display:flex; align-items:center; gap:12px; line-height:1.4; }

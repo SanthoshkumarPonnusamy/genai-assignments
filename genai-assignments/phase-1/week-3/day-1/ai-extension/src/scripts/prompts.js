@@ -83,6 +83,122 @@ export const DEFAULT_PROMPTS = {
     - Clean, maintainable, enterprise-ready.
   `,
 
+    /**
+     * Selenium Java Test Class (Standalone Test Script)
+     */
+    SELENIUM_JAVA_TEST_CLASS: `
+    Instructions:
+    - Generate ONLY a Selenium Java test class (JUnit or TestNG style).
+    - Include WebDriver setup/teardown and sample test methods that exercise the DOM.
+    - Reference page elements using selectors derived from the provided DOM.
+    - Do NOT include Page Object classes or explanations.
+
+    Context:
+    DOM:
+    \`\`\`html
+    \${domContent}
+    \`\`\`
+    URL: \${pageUrl}
+
+    Example:
+    \`\`\`java
+    package com.testleaf.tests;
+
+    import org.junit.After;
+    import org.junit.Before;
+    import org.junit.Test;
+    import org.openqa.selenium.WebDriver;
+    import org.openqa.selenium.chrome.ChromeDriver;
+
+    public class LoginTest {
+      private WebDriver driver;
+
+      @Before
+      public void setUp() {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+      }
+
+      @After
+      public void tearDown() {
+        if (driver != null) driver.quit();
+      }
+
+      @Test
+      public void testLogin() {
+        driver.get("\${pageUrl}");
+        // Interact with elements derived from DOM
+      }
+    }
+    \`\`\`
+
+    Persona:
+    - Audience: Automation engineers who want runnable test scripts.
+
+    Output Format:
+    - A single Java test class inside a \`\`\`java\`\`\` block.
+
+    Tone:
+    - Executable, concise, company-ready.
+    `,
+
+    /**
+     * Selenium C# Test Class (Standalone Test Script)
+     */
+    SELENIUM_CSHARP_TEST_CLASS: `
+    Instructions:
+    - Generate ONLY a Selenium C# test class (NUnit style).
+    - Include WebDriver setup/teardown and sample test methods that exercise the DOM.
+    - Reference page elements using selectors derived from the provided DOM.
+    - Do NOT include Page Object classes or explanations.
+
+    Context:
+    DOM:
+    \`\`\`html
+    \${domContent}
+    \`\`\`
+    URL: \${pageUrl}
+
+    Example:
+    \`\`\`csharp
+    using NUnit.Framework;
+    using OpenQA.Selenium;
+    using OpenQA.Selenium.Chrome;
+
+    namespace TestLeaf.Tests {
+      public class LoginTest {
+        private IWebDriver driver;
+
+        [SetUp]
+        public void SetUp() {
+          driver = new ChromeDriver();
+          driver.Manage().Window.Maximize();
+        }
+
+        [TearDown]
+        public void TearDown() {
+          driver?.Quit();
+        }
+
+        [Test]
+        public void TestLogin() {
+          driver.Navigate().GoToUrl("\${pageUrl}");
+          // Interact with elements derived from DOM
+        }
+      }
+    }
+    \`\`\`
+
+    Persona:
+    - Audience: Automation engineers who want runnable test scripts.
+
+    Output Format:
+    - A single C# test class inside a \`\`\`csharp\`\`\` block.
+
+    Tone:
+    - Executable, concise, company-ready.
+    `,
+
   /**
    * Cucumber Feature File Only Prompt
    */
@@ -371,4 +487,6 @@ export const CODE_GENERATOR_TYPES = {
   CUCUMBER_ONLY: 'Cucumber-Only',
   CUCUMBER_WITH_SELENIUM_JAVA_STEPS: 'Cucumber-With-Selenium-Java-Steps',
   CUCUMBER_WITH_SELENIUM_CSHARP_STEPS: 'Cucumber-With-Selenium-CSharp-Steps',
+  SELENIUM_JAVA_TEST_CLASS: 'Selenium-Java-Test-Class',
+  SELENIUM_CSHARP_TEST_CLASS: 'Selenium-CSharp-Test-Class',
 };

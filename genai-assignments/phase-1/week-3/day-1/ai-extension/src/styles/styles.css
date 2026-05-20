@@ -25,9 +25,17 @@
 
 .chat-bottom-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
     gap: 8px;
     margin-top: 12px;
+}
+
+.chat-bottom-container .chat-input-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 
 .inspector-toggle {
@@ -43,7 +51,6 @@
     min-width: 80px;
     height: 36px;
     justify-content: center;
-    align-self: flex-end;
     background-color: #ff6b2b;
     border: none;
     font-weight: bold;
