@@ -152,7 +152,7 @@ if (!window.elementInspector) {
             if (this.selectedElements.has(element)) {
                 // If already selected, unselect it
                 this.selectedElements.delete(element);
-                element.classList.remove('-selected');
+                element.classList.remove('genai-selected');
             } else {
                 // Otherwise add it
                 this.selectedElements.add(element);

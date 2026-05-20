@@ -47,19 +47,19 @@
               />
               Page Class
             </label>
+            <label>
+              <input
+                type="checkbox"
+                name="javaGenerationMode"
+                id="javaGenModeTest"
+                value="TEST"
+              />
+              Test Script
+            </label>
           </div>
         </div>
       </div>
       <!-- End radio buttons row -->
-
-      <div class="controls-section">
-        <div class="button-container">
-          <button id="resetChat" class="reset-button">
-            <i class="fas fa-redo-alt"></i>
-            <span>Reset Chat</span>
-          </button>
-        </div>
-      </div>
 
       <div class="chat-container">
         <div class="chat-messages" id="chatMessages">
@@ -82,6 +82,10 @@
             <button id="sendMessage" class="inspector-toggle">
               <i class="fa-solid fa-code"></i>
               <span>Generate</span>
+            </button>
+            <button id="resetChat" class="reset-button visible">
+              <i class="fas fa-redo-alt"></i>
+              <span>Reset Chat</span>
             </button>
           </div>
         </div>
