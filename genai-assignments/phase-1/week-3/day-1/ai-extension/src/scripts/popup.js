@@ -103,20 +103,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     const openaiApiKeyInput = document.getElementById('openaiApiKey');
     const testleafApiKeyInput = document.getElementById('testleafApiKey');
 
-    // Model options by provider
-    const modelsByProvider = {
-      groq: [
-        { value: 'deepseek-r1-distill-llama-70b', label: 'deepseek-r1-distill-llama-70b' },
-        { value: 'llama-3.3-70b-versatile', label: 'llama-3.3-70b-versatile' },
-        { value: 'openai/gpt-oss-120b', label: 'openai/gpt-oss-120b' },
-      ],
-      openai: [
-        { value: 'gpt-4o', label: 'GPT-4o' },
-        { value: 'gpt-4o-mini', label: 'GPT-4o Mini' },
+    // // Model options by provider
+    // const modelsByProvider = {
+    //   groq: [
+    //     { value: 'deepseek-r1-distill-llama-70b', label: 'deepseek-r1-distill-llama-70b' },
+    //     { value: 'llama-3.3-70b-versatile', label: 'llama-3.3-70b-versatile' },
+    //     { value: 'openai/gpt-oss-120b', label: 'openai/gpt-oss-120b' },
+    //   ],
+    //   openai: [
+    //     { value: 'gpt-4o', label: 'GPT-4o' },
+    //     { value: 'gpt-4o-mini', label: 'GPT-4o Mini' },
 
-      ] 
-    };
+    //   ] 
+    // };
     
+       // Model options by provider
+    const modelsByProvider = {
+      testleaf: [
+        { value: 'ft:gpt-4o-mini-2024-07-18:testleaf-2::Digg6CrB', label: 'Santhosh_TestLeaf 2.0 Fine-tuned'},
+        { value: 'ft:gpt-4o-mini-2024-07-18:testleaf-2::DiZlHRx7', label: 'TestLeaf 1.0' }
+      ]
+    };
+
     // Function to update model options based on selected provider
     function updateModelOptions(provider) {
       modelSelect.innerHTML = '<option value="" disabled selected>Select the model...</option>';

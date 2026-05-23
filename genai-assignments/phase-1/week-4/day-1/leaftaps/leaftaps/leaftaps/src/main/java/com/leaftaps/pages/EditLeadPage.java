@@ -1,0 +1,33 @@
+package com.leaftaps.pages;
+
+import com.framework.selenium.api.design.Locators;
+import com.framework.testng.api.base.ProjectSpecificMethods;
+
+/**
+ * Page object representing the Edit Lead page.
+ * Provides methods to update lead details and submit changes.
+ * @author Auto-generated
+ */
+public class EditLeadPage extends ProjectSpecificMethods {
+
+	/**
+	 * Updates the company name in the Edit Lead form.
+	 * @param updcomnyName The new company name to enter
+	 * @return The current EditLeadPage instance
+	 */
+	public EditLeadPage updateCompanyName(String updcomnyName) {
+		clearAndType(locateElement(Locators.ID,"updateLeadForm_companyName"), updcomnyName);
+		reportStep(updcomnyName +"Updated company name is entered successfully ", "pass");
+		return this;
+	}
+
+	/**
+	 * Clicks the Update button to submit the changes.
+	 * @return A new ViewLeadPage instance
+	 */
+	public ViewLeadPage clickUpdateSubmit() {
+		click(locateElement(Locators.CLASS_NAME,"smallSubmit"));
+		return new ViewLeadPage();
+	}
+
+}
