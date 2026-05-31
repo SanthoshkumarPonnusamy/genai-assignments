@@ -1,0 +1,2 @@
+Fetch the user story title, description and acceptance criteria only text 
+
