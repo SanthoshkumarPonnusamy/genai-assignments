@@ -1,0 +1,58 @@
+{
+  "info": {
+    "_postman_id": "bad7eedc-d117-4bf9-975b-3d5f94d6128a",
+    "name": "Jira API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "8271835"
+  },
+  "item": [
+    {
+      "name": "Get User Stories",
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "ATATT3xFfGF0SJPexIRvEuqGuDQhUYPogebyXWz0DP3TjH_CH7Qxii-wqFm3QDEHlpqnTMey2SZ1yPce0vMUYkPhWXdYaDifjYCrthyIE8UxfXb13cZfGqw1iDQYaGHlbYaw9XKeju4mgieje0s4vQL2WwC5r7k9mHXXGYAfEQ4T_pOZCgmjX2U=266C7F3B",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "santhosh2012msc@gmail.com",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"jql\": \"key=\\\"GEN-25\\\"\",\r\n    \"fields\": [\r\n        \"key\",\r\n        \"summary\",\r\n        \"description\",\r\n        \"status\",\r\n        \"reporter\",\r\n        \"details\"\r\n    ],\r\n    \"maxResults\": 1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://santhosh2012msc.atlassian.net/rest/api/3/search/jql",
+          "protocol": "https",
+          "host": [
+            "santhosh2012msc",
+            "atlassian",
+            "net"
+          ],
+          "path": [
+            "rest",
+            "api",
+            "3",
+            "search",
+            "jql"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

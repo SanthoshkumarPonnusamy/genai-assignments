@@ -1,0 +1,140 @@
+{
+  "info": {
+    "_postman_id": "fe4f645a-8297-45c3-a6a6-d0c86c973113",
+    "name": "JiraCollection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "49189705",
+    "_collection_link": "https://go.postman.co/collection/49189705-fe4f645a-8297-45c3-a6a6-d0c86c973113?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Fetch userstories",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "",
+            "value": "",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"jql\": \"key = \\\"SCRUM-2\\\"\",\r\n    \"fields\": [\r\n        \"key\",\r\n        \"summary\",\r\n        \"description\",\r\n        \"status\",\r\n        \"reporter\",\r\n        \"details\"\r\n       \r\n    ],\r\n    \"maxResults\": 1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://shaneagle21ai3.atlassian.net/rest/api/3/search/jql",
+          "protocol": "https",
+          "host": [
+            "shaneagle21ai3",
+            "atlassian",
+            "net"
+          ],
+          "path": [
+            "rest",
+            "api",
+            "3",
+            "search",
+            "jql"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Fetch userstories Copy",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "",
+            "value": "",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "url": {
+          "raw": "https://shaneagle21ai3.atlassian.net/rest/api/3/search/jql?jql=project%20%3D%20SCRUM%20AND%20issuetype%20%3D%20Story&fields=key,summary,description,status,reporter&startAt=0",
+          "protocol": "https",
+          "host": [
+            "shaneagle21ai3",
+            "atlassian",
+            "net"
+          ],
+          "path": [
+            "rest",
+            "api",
+            "3",
+            "search",
+            "jql"
+          ],
+          "query": [
+            {
+              "key": "jql",
+              "value": "project%20%3D%20SCRUM%20AND%20issuetype%20%3D%20Story"
+            },
+            {
+              "key": "fields",
+              "value": "key,summary,description,status,reporter"
+            },
+            {
+              "key": "maxResults",
+              "value": "100",
+              "disabled": true
+            },
+            {
+              "key": "startAt",
+              "value": "0"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "password",
+        "value": "ATATT3xFfGF0SELOe-vBc_ELJpcJ4I4F1lLI2GuLIda38Lm0GawYGMQWkRcT_hgJhk-N_TPgMCuTY-d7fh63GXsXC-bz4aaq6LsW9YLqynYsQ0fBraWWx-3y1adCZq7DRt7_gnTqBx9eEBA3AUqvsYV-OZrXVYs8TfK8DmL8JHJKJD-7GCiotf4=AA229A81",
+        "type": "string"
+      },
+      {
+        "key": "username",
+        "value": "shaneagle21ai3@gmail.com",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}

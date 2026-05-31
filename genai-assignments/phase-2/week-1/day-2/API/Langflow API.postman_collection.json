@@ -1,0 +1,121 @@
+{
+  "info": {
+    "_postman_id": "3a924ff1-fa3a-402e-8547-2038bf138eca",
+    "name": "Langflow API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "8271835"
+  },
+  "item": [
+    {
+      "name": "Use Langflow API",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-api-key",
+            "value": "sk-oJ3We6rR33smNNO41J_vI9Yde7Yc5uKEgp8hY8m8hXU"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\t\t           \"output_type\": \"text\",\r\n\t\t           \"input_type\": \"text\",\r\n\t\t           \"input_value\": \"Generate Fund Transfer Cases\"\r\n\t\t         }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:7860/api/v1/run/d902562a-023b-4c63-89ae-c4c9e6eff348",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "7860",
+          "path": [
+            "api",
+            "v1",
+            "run",
+            "d902562a-023b-4c63-89ae-c4c9e6eff348"
+          ],
+          "query": [
+            {
+              "key": "stream",
+              "value": "false ",
+              "disabled": true
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request POST \\\r\n     --url 'http://localhost:7860/api/v1/run/d902562a-023b-4c63-89ae-c4c9e6eff348?stream=false' \\\r\n     --header 'Content-Type: application/json' \\\r\n     --header \"x-api-key: YOUR_API_KEY_HERE\" \\ \r\n     --data '{\r\n\t\t           \"output_type\": \"text\",\r\n\t\t           \"input_type\": \"text\",\r\n\t\t           \"input_value\": \"hello world!\",\r\n\t\t           \"session_id\": \"YOUR_SESSION_ID_HERE\"\r\n\t\t         }'"
+      },
+      "response": []
+    },
+    {
+      "name": "Modify Langflow API",
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "ATATT3xFfGF0SJPexIRvEuqGuDQhUYPogebyXWz0DP3TjH_CH7Qxii-wqFm3QDEHlpqnTMey2SZ1yPce0vMUYkPhWXdYaDifjYCrthyIE8UxfXb13cZfGqw1iDQYaGHlbYaw9XKeju4mgieje0s4vQL2WwC5r7k9mHXXGYAfEQ4T_pOZCgmjX2U=266C7F3B",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "santhosh2012msc@gmail.com",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-api-key",
+            "value": "sk-oJ3We6rR33smNNO41J_vI9Yde7Yc5uKEgp8hY8m8hXU"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n\t\t           \"output_type\": \"chat\",\r\n\t\t           \"input_type\": \"chat\",\r\n\t\t           \"input_value\": \"Generate Fund Transfer Cases\",\r\n\t\t           \"tweaks\": {\r\n\t\t             \"GroqModel-k2HMp\": {\r\n\t\t               \"api_key\": \"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\",\r\n\t\t               \"temperature\": 0.1\r\n\t\t             }\r\n\t\t           }\r\n\t\t         }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:7860/api/v1/run/a22ab151-ddba-457c-9010-a23c2afb04cb",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "7860",
+          "path": [
+            "api",
+            "v1",
+            "run",
+            "a22ab151-ddba-457c-9010-a23c2afb04cb"
+          ],
+          "query": [
+            {
+              "key": "stream",
+              "value": "false ",
+              "disabled": true
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request POST \\\r\n     --url 'http://localhost:7860/api/v1/run/a22ab151-ddba-457c-9010-a23c2afb04cb?stream=false' \\\r\n     --header 'Content-Type: application/json' \\\r\n     --header \"x-api-key: YOUR_API_KEY_HERE\" \\ \r\n     --data '{\r\n\t\t           \"output_type\": \"chat\",\r\n\t\t           \"input_type\": \"chat\",\r\n\t\t           \"input_value\": \"hello world!\",\r\n\t\t           \"tweaks\": {\r\n\t\t             \"GroqModel-k2HMp\": {\r\n\t\t               \"api_key\": \"GroqKey\",\r\n\t\t               \"temperature\": 0.1\r\n\t\t             }\r\n\t\t           },\r\n\t\t           \"session_id\": \"YOUR_SESSION_ID_HERE\"\r\n\t\t         }'"
+      },
+      "response": []
+    }
+  ]
+}
