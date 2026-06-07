@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Testcase Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 8px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 8px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .header {
+            background: white;
+            padding: 10px 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 2px;
+            font-size: 18px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 10px;
+            line-height: 1.2;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            min-height: 200px;
+        }
+
+        .chat-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+            padding: 6px 10px;
+            border-radius: 8px;
+            max-width: 85%;
+            word-wrap: break-word;
+            font-size: 11px;
+            line-height: 1.3;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .message.user {
+            background: #667eea;
+            color: white;
+            align-self: flex-end;
+            margin-right: 10px;
+        }
+
+        .message.assistant {
+            background: #f0f0f0;
+            color: #333;
+            align-self: flex-start;
+            margin-left: 10px;
+        }
+
+        .testcase-section {
+            margin: 8px 0;
+            padding: 8px;
+            background: #f9f9f9;
+            border-left: 3px solid #667eea;
+            border-radius: 4px;
+        }
+
+        .testcase-id {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 12px;
+        }
+
+        .testcase-title {
+            font-weight: 600;
+            color: #333;
+            margin: 4px 0;
+            font-size: 11px;
+        }
+
+        .testcase-label {
+            font-weight: 600;
+            color: #555;
+            margin-top: 4px;
+            font-size: 10px;
+        }
+
+        .testcase-content {
+            font-size: 10px;
+            color: #444;
+            margin: 3px 0 3px 15px;
+            line-height: 1.4;
+        }
+
+        .input-area {
+            padding: 6px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 5px;
+            background: white;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 6px;
+            flex: 1;
+        }
+
+        textarea {
+            flex: 1;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 10px;
+            resize: none;
+            max-height: 45px;
+            min-height: 40px;
+            overflow-y: hidden;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-send {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-send:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sidebar-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 8px;
+        }
+
+        .sidebar-panel h3 {
+            color: #333;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        .sample-stories {
+            font-size: 9px;
+            line-height: 1.2;
+            color: #555;
+            background: #f9f9f9;
+            padding: 5px;
+            border-radius: 6px;
+            margin-bottom: 5px;
+        }
+
+        .sample-stories-item {
+            padding: 4px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .sample-stories-item:last-child {
+            border-bottom: none;
+        }
+
+        .sample-stories-item:hover {
+            background: #f0f0f0;
+            padding-left: 5px;
+        }
+
+        .story-text {
+            margin-bottom: 2px;
+            font-size: 9px;
+        }
+
+        .copy-story-btn {
+            font-size: 9px;
+            padding: 2px 6px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .copy-story-btn:hover {
+            background: #5568d3;
+        }
+
+        .sample-stories::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sample-stories::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .sample-stories::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .langflow-config {
+            background: #f9f9f9;
+            padding: 5px;
+            border-radius: 6px;
+            font-size: 9px;
+            margin-bottom: 5px;
+        }
+
+        .langflow-config input {
+            width: 100%;
+            padding: 2px;
+            margin: 2px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 8px;
+        }
+
+        .langflow-config label {
+            display: block;
+            color: #333;
+            font-weight: 500;
+            margin-top: 4px;
+            margin-bottom: 1px;
+            font-size: 9px;
+        }
+
+        .btn-apply-config {
+            background: #28a745;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-apply-config:hover {
+            background: #218838;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .instructions-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 8px;
+            margin-bottom: 0;
+        }
+
+        .instructions-panel h3 {
+            color: #333;
+            margin-bottom: 0;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .instructions-panel h3:hover {
+            color: #667eea;
+        }
+
+        .instructions-content {
+            font-size: 10px;
+            line-height: 1.4;
+            color: #555;
+            display: none;
+            margin-top: 6px;
+        }
+
+        .instructions-content.show {
+            display: block;
+        }
+
+        .instructions-content ol, .instructions-content ul {
+            margin-left: 16px;
+            margin-bottom: 5px;
+        }
+
+        .instructions-content li {
+            margin-bottom: 4px;
+            font-size: 10px;
+        }
+
+        .instructions-content strong {
+            color: #333;
+        }
+
+        .toggle-icon {
+            display: inline-block;
+            margin-right: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.open {
+            transform: rotate(180deg);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .message {
+                max-width: 95%;
+            }
+
+            .chat-container {
+                height: 60vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <div class="header">
+                <h1>🧪 AI-Powered Testcase Generator</h1>
+                <p>Generate comprehensive test cases from your user stories using AI. Simply paste your user stories below and let our AI create detailed test cases for you.</p>
+            </div>
+
+            <div class="instructions-panel">
+                <h3 onclick="toggleInstructions()">
+                    <span class="toggle-icon" id="toggleIcon">▶</span>
+                    📖 How to Use (Click to expand)
+                </h3>
+                <div class="instructions-content" id="instructionsContent">
+                    <ol>
+                        <li><strong>Prepare Your User Stories:</strong> Gather the user stories or requirements you want to generate test cases for. You can use the sample stories provided in the sidebar or paste your own.</li>
+                        <li><strong>Copy Sample Stories (Optional):</strong> Click the <strong>"📋 Copy Stories"</strong> button in the sidebar to copy pre-built banking domain examples to your clipboard.</li>
+                        <li><strong>Paste Your Input:</strong> Click in the input textarea at the bottom and paste your user stories. Each story should clearly describe a feature or functionality.</li>
+                        <li><strong>Send Your Request:</strong> Press the <strong>"Send"</strong> button or press <strong>Enter + Shift</strong> to submit your user stories to the AI Testcase Generator.</li>
+                        <li><strong>Review Generated Test Cases:</strong> The AI will analyze your user stories and generate comprehensive test cases with:
+                            <ul>
+                                <li>Test case IDs and titles</li>
+                                <li>Preconditions and postconditions</li>
+                                <li>Step-by-step test execution steps</li>
+                                <li>Expected results</li>
+                                <li>Edge cases and scenarios</li>
+                            </ul>
+                        </li>
+                        <li><strong>Copy the Output:</strong> Once test cases are generated, click <strong>"📎 Copy Output"</strong> to copy all test cases to your clipboard for use in your testing framework.</li>
+                        <li><strong>Clear and Start Over:</strong> Click the <strong>"🗑️ Clear Chat"</strong> button to reset the conversation and generate test cases for different user stories.</li>
+                    </ol>
+                    <br>
+                    <strong>💡 Tips for Best Results:</strong>
+                    <ul>
+                        <li>Use clear, specific user stories with defined acceptance criteria</li>
+                        <li>Include the user role, action, and business value in your stories</li>
+                        <li>Specify edge cases or special conditions if needed</li>
+                        <li>Keep stories concise but descriptive for accurate test case generation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-wrapper">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message assistant">
+                            <strong>Assistant:</strong> Welcome to the Testcase Generator! Please paste your user stories in the input area below to generate test cases.
+                        </div>
+                    </div>
+                </div>
+                <div class="input-area">
+                    <div class="input-group">
+                        <textarea id="userInput" placeholder="Paste your user stories here..."></textarea>
+                        <button class="btn-send" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="sidebar-panel">
+                <h3>📚 Banking Domain Stories</h3>
+                <div class="sample-stories" id="sampleStories">
+                    <div class="sample-stories-item">
+                        <div class="story-text"><strong>Fund Transfer:</strong> As a customer, I want to transfer funds between my accounts so that I can manage my money efficiently.</div>
+                        <button class="copy-story-btn" onclick="copySingleStory('As a customer, I want to transfer funds between my accounts so that I can manage my money efficiently.')">Copy</button>
+                    </div>
+                    <div class="sample-stories-item">
+                        <div class="story-text"><strong>View History:</strong> As a customer, I want to view my transaction history for the last 90 days so that I can track my spending.</div>
+                        <button class="copy-story-btn" onclick="copySingleStory('As a customer, I want to view my transaction history for the last 90 days so that I can track my spending.')">Copy</button>
+                    </div>
+                    <div class="sample-stories-item">
+                        <div class="story-text"><strong>Bill Payments:</strong> As a customer, I want to pay bills directly from my account so that I can manage my expenses conveniently.</div>
+                        <button class="copy-story-btn" onclick="copySingleStory('As a customer, I want to pay bills directly from my account so that I can manage my expenses conveniently.')">Copy</button>
+                    </div>
+                    <div class="sample-stories-item">
+                        <div class="story-text"><strong>Account Alerts:</strong> As a customer, I want to set up alerts for large transactions so that I can monitor my account security.</div>
+                        <button class="copy-story-btn" onclick="copySingleStory('As a customer, I want to set up alerts for large transactions so that I can monitor my account security.')">Copy</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-panel">
+                <h3>⚙️ Langflow Configuration</h3>
+                <div class="langflow-config">
+                    <label>🔗 Host URL:</label>
+                    <input type="text" id="hostUrl" placeholder="e.g., https://api.langflow.com" value="">
+                    <small style="font-size: 8px; color: #888;">Example: https://your-langflow-instance.com</small>
+                    
+                    <label>🎯 Flow ID:</label>
+                    <input type="text" id="flowId" placeholder="e.g., abc-123-xyz" value="">
+                    <small style="font-size: 8px; color: #888;">Copy from your Langflow flow URL</small>
+                    
+                    <label>🔑 API Key:</label>
+                    <input type="password" id="apiKey" placeholder="Your API Key" value="">
+                    <small style="font-size: 8px; color: #888;">From Langflow settings/API Keys</small>
+                    
+                    <button class="btn-apply-config" onclick="applyLangflowConfig()">Apply Config</button>
+                    <button class="btn-secondary" onclick="testLangflowConnection()" style="width: 100%; margin-top: 5px; font-size: 10px;">🧪 Test Connection</button>
+                </div>
+            </div>
+
+            <div class="sidebar-panel">
+                <h3>⚙️ Actions</h3>
+                <div class="action-buttons">
+                    <button class="btn-secondary" onclick="copySampleStories()">📋 Copy All Stories</button>
+                    <button class="btn-secondary" onclick="copyOutput()">📎 Copy Output</button>
+                    <button class="btn-danger" onclick="clearChat()">🗑️ Clear Chat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/logspace-ai/langflow-embedded-chat@v1.0.7/dist/build/static/js/bundle.min.js"></script>
+    <script>
+        let langflowConfig = {
+            hostUrl: '',
+            flowId: '',
+            apiKey: ''
+        };
+        let isWaitingForResponse = false;
+
+        function applyLangflowConfig() {
+            const hostUrl = document.getElementById('hostUrl').value.trim();
+            const flowId = document.getElementById('flowId').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            if (!hostUrl || !flowId || !apiKey) {
+                alert('Please fill in all Langflow configuration fields');
+                return;
+            }
+
+            langflowConfig = { hostUrl, flowId, apiKey };
+            alert('✅ Langflow configuration applied successfully! Now ready to generate test cases.');
+            console.log('Langflow config:', { hostUrl, flowId, apiKeyLength: apiKey.length });
+        }
+
+        async function testLangflowConnection() {
+            const hostUrl = document.getElementById('hostUrl').value.trim();
+            const flowId = document.getElementById('flowId').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            if (!hostUrl || !flowId || !apiKey) {
+                alert('❌ Please fill in all configuration fields first');
+                return;
+            }
+
+            console.clear();
+            console.log('='.repeat(60));
+            console.log('🧪 LANGFLOW CONNECTION TEST');
+            console.log('='.repeat(60));
+            console.log('Host URL:', hostUrl);
+            console.log('Flow ID:', flowId);
+            console.log('API Key Length:', apiKey.length, 'characters');
+            console.log('API Key starts with:', apiKey.substring(0, 10) + '***');
+            console.log('=' . repeat(60));
+
+            alert('🧪 Testing connection...\n\n👉 IMPORTANT: Open browser console (F12) to see detailed diagnostics!\n\nConsole will show:\n- Each endpoint being tried\n- Headers being sent\n- Response details\n- Success/failure reasons');
+
+            try {
+                const testPayload = {
+                    input_value: "Test message for connection check",
+                    output_type: "chat",
+                    stream: false
+                };
+
+                const endpoints = [
+                    { url: `${hostUrl}/api/v1/run/${flowId}`, authType: 'bearer', name: 'v1/run + Bearer' },
+                    { url: `${hostUrl}/api/v1/flows/${flowId}/run`, authType: 'bearer', name: 'v1/flows/run + Bearer' },
+                    { url: `${hostUrl}/api/v1/flows/${flowId}/invoke`, authType: 'bearer', name: 'v1/flows/invoke + Bearer' },
+                    { url: `${hostUrl}/api/v1/run/${flowId}`, authType: 'header', name: 'v1/run + x-api-key' },
+                    { url: `${hostUrl}/api/v1/flows/${flowId}/run`, authType: 'header', name: 'v1/flows/run + x-api-key' },
+                    { url: `${hostUrl}/lf/api/v1/run/${flowId}`, authType: 'bearer', name: 'lf/api/v1/run + Bearer' }
+                ];
+
+                for (let idx = 0; idx < endpoints.length; idx++) {
+                    const { url, authType, name } = endpoints[idx];
+                    
+                    console.log(`\n🔍 Test ${idx + 1}/${endpoints.length}: ${name}`);
+                    console.log(`   URL: ${url}`);
+                    
+                    const headers = {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    };
+
+                    if (authType === 'bearer') {
+                        headers['Authorization'] = `Bearer ${apiKey}`;
+                        console.log(`   Auth: Bearer token (${apiKey.length} chars)`);
+                    } else {
+                        headers['x-api-key'] = apiKey;
+                        console.log(`   Auth: x-api-key header (${apiKey.length} chars)`);
+                    }
+
+                    console.log(`   Payload: ${JSON.stringify(testPayload)}`);
+                    
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: headers,
+                        mode: 'cors',
+                        credentials: 'omit',
+                        body: JSON.stringify(testPayload)
+                    });
+
+                    const responseText = await response.text();
+                    console.log(`   Status: ${response.status} ${response.statusText}`);
+                    console.log(`   Headers:`, Object.fromEntries(response.headers));
+                    console.log(`   Body: ${responseText.substring(0, 500)}...`);
+
+                    if (response.ok) {
+                        console.log(`\n✅ SUCCESS with: ${name}`);
+                        console.log(`   Use this endpoint format for chat!`);
+                        alert(`✅ Connection successful!\n\nWorking Configuration:\n- Endpoint: ${name}\n- URL: ${url}\n\nYou can now use the chat to generate test cases.`);
+                        langflowConfig = { hostUrl, flowId, apiKey };
+                        return;
+                    } else if (response.status === 403) {
+                        console.warn(`   ⚠️ 403 Forbidden - Auth issue, trying next...`);
+                    } else if (response.status === 401) {
+                        console.warn(`   ⚠️ 401 Unauthorized - Invalid credentials, trying next...`);
+                    } else {
+                        console.warn(`   ⚠️ ${response.status} - Trying next endpoint...`);
+                    }
+                }
+
+                console.log('\n' + '='.repeat(60));
+                console.log('❌ ALL TESTS FAILED');
+                console.log('='.repeat(60));
+                console.log('\nTroubleshooting steps:\n1. Verify API key is active and not expired\n2. Check if flow is published/deployed\n3. Ensure correct Host URL (without /api/v1)\n4. Verify Flow ID from flow URL\n5. Check Langflow version compatibility\n6. Look for detailed error messages above');
+
+                alert(`❌ Connection test failed on all endpoints.\n\n🔧 Troubleshooting:\n1. Check your Langflow version (try: ${hostUrl}/docs)\n2. Ensure flow is published/deployed\n3. Verify API key hasn't expired\n4. Try regenerating API key in Langflow\n5. Check CORS settings\n\n📋 Full details in browser console (F12 → Console tab)`);
+
+            } catch (error) {
+                console.error('\n❌ Connection test error:', error);
+                alert(`❌ Connection test failed:\n${error.message}\n\nCheck console (F12) for full error details.`);
+            }
+        }
+
+        function toggleInstructions() {
+            const content = document.getElementById('instructionsContent');
+            const icon = document.getElementById('toggleIcon');
+            content.classList.toggle('show');
+            icon.classList.toggle('open');
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            if (isWaitingForResponse) {
+                alert('Please wait for the previous response...');
+                return;
+            }
+
+            // Check if Langflow is configured
+            if (!langflowConfig.hostUrl || !langflowConfig.flowId || !langflowConfig.apiKey) {
+                alert('❌ Langflow is not configured!\n\nPlease:\n1. Fill in Langflow Host URL, Flow ID, and API Key in the Configuration panel\n2. Click "Apply Config"\n3. Then send your message');
+                return;
+            }
+
+            // Add user message to chat
+            addMessage(message, 'user');
+            input.value = '';
+            isWaitingForResponse = true;
+
+            // Add loading indicator
+            addMessage('⏳ Generating test cases... Please wait...', 'assistant');
+
+            try {
+                const response = await callLangflowAPI(message);
+                
+                // Remove loading message
+                const chatMessages = document.getElementById('chatMessages');
+                const lastMessage = chatMessages.lastElementChild;
+                if (lastMessage && lastMessage.textContent.includes('⏳')) {
+                    lastMessage.remove();
+                }
+
+                // Add actual response
+                addMessage(response, 'assistant');
+            } catch (error) {
+                console.error('Error calling Langflow API:', error);
+                addMessage('❌ Error: ' + error.message, 'assistant');
+            } finally {
+                isWaitingForResponse = false;
+            }
+        }
+
+        async function callLangflowAPI(userInput) {
+            // Try multiple endpoint formats and authentication methods for compatibility
+            const endpoints = [
+                { url: `${langflowConfig.hostUrl}/api/v1/run/${langflowConfig.flowId}`, authType: 'bearer', payloadType: 'v1' },
+                { url: `${langflowConfig.hostUrl}/api/v1/flows/${langflowConfig.flowId}/run`, authType: 'bearer', payloadType: 'v1' },
+                { url: `${langflowConfig.hostUrl}/api/v1/flows/${langflowConfig.flowId}/invoke`, authType: 'bearer', payloadType: 'v1' },
+                { url: `${langflowConfig.hostUrl}/api/v1/run/${langflowConfig.flowId}`, authType: 'header', payloadType: 'v1' },
+                { url: `${langflowConfig.hostUrl}/api/v1/flows/${langflowConfig.flowId}/run`, authType: 'header', payloadType: 'v1' },
+                { url: `${langflowConfig.hostUrl}/lf/api/v1/run/${langflowConfig.flowId}`, authType: 'bearer', payloadType: 'v1' },
+                { url: `${langflowConfig.hostUrl}/api/v1/chat/${langflowConfig.flowId}`, authType: 'bearer', payloadType: 'chat' }
+            ];
+            
+            const payloads = {
+                v1: {
+                    input_value: userInput,
+                    output_type: 'chat',
+                    stream: false
+                },
+                chat: {
+                    message: userInput,
+                    stream: false
+                }
+            };
+
+            console.log('🚀 Attempting Langflow API calls with', endpoints.length, 'endpoint combinations');
+
+            for (let i = 0; i < endpoints.length; i++) {
+                const { url, authType, payloadType } = endpoints[i];
+                const payload = payloads[payloadType];
+                
+                console.log(`\n📍 Attempt ${i + 1}/${endpoints.length}`);
+                console.log(`   Endpoint: ${url}`);
+                console.log(`   Auth Type: ${authType}`);
+                console.log(`   Payload Type: ${payloadType}`);
+
+                try {
+                    const headers = {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    };
+
+                    // Add authentication header based on type
+                    if (authType === 'bearer') {
+                        headers['Authorization'] = `Bearer ${langflowConfig.apiKey}`;
+                    } else if (authType === 'header') {
+                        headers['x-api-key'] = langflowConfig.apiKey;
+                    }
+
+                    console.log(`   Headers: Authorization=${authType === 'bearer' ? 'Bearer ***' : 'x-api-key: ***'}`);
+                    console.log(`   Payload:`, JSON.stringify(payload));
+
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: headers,
+                        mode: 'cors',
+                        credentials: 'omit',
+                        body: JSON.stringify(payload)
+                    });
+
+                    console.log(`   ✓ Response Status: ${response.status} ${response.statusText}`);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log(`   ✅ SUCCESS! Response data:`, data);
+                        return extractResponseMessage(data);
+                    } else {
+                        const responseText = await response.text();
+                        console.warn(`   ✗ Failed (${response.status}):`, responseText.substring(0, 300));
+                        
+                        if (response.status !== 403 && response.status !== 401) {
+                            // Don't continue trying if it's not auth-related
+                            try {
+                                const errorData = JSON.parse(responseText);
+                                throw new Error(`${response.status}: ${errorData.message || JSON.stringify(errorData)}`);
+                            } catch (e) {
+                                throw new Error(`${response.status} ${response.statusText}: ${responseText.substring(0, 200)}`);
+                            }
+                        }
+                        // Continue trying other endpoints for 403/401
+                        continue;
+                    }
+                } catch (error) {
+                    console.error(`   ❌ Error:`, error.message);
+                    if (i === endpoints.length - 1) {
+                        throw new Error(error.message + '\n\n🔧 Troubleshooting tips:\n- Verify API key is correct\n- Check if flow is published/deployed\n- Ensure Host URL format is correct\n- Check CORS settings on Langflow server');
+                    }
+                }
+            }
+
+            throw new Error('All API endpoints failed.\n\n❌ Common causes:\n1. Invalid or expired API key\n2. Flow not published/deployed\n3. Incorrect Host URL\n4. Flow ID is wrong\n5. Server CORS disabled\n\n💡 Try the Test Connection button and check browser console (F12)');
+        }
+
+        function extractResponseMessage(data) {
+            // Handle various response formats from Langflow
+            console.log('Raw response data:', data);
+
+            // Format 1: Nested outputs with text data
+            if (data.outputs && Array.isArray(data.outputs) && data.outputs.length > 0) {
+                const output = data.outputs[0];
+                
+                // Try nested outputs structure
+                if (output.outputs && Array.isArray(output.outputs) && output.outputs.length > 0) {
+                    const nestedOutput = output.outputs[0];
+                    
+                    // Check for results.message.data.text
+                    if (nestedOutput.results?.message?.data?.text) {
+                        return formatTestCases(nestedOutput.results.message.data.text);
+                    }
+                    
+                    // Check for direct message
+                    if (nestedOutput.message) {
+                        if (typeof nestedOutput.message === 'string') {
+                            return formatTestCases(nestedOutput.message);
+                        }
+                        if (nestedOutput.message.text) {
+                            return formatTestCases(nestedOutput.message.text);
+                        }
+                    }
+                    
+                    if (nestedOutput.text) {
+                        return formatTestCases(nestedOutput.text);
+                    }
+                }
+                
+                // Check direct output properties
+                if (output.message) return formatTestCases(output.message);
+                if (output.text) return formatTestCases(output.text);
+            }
+
+            // Format 2: direct message
+            if (data.message) return formatTestCases(data.message);
+            if (data.text) return formatTestCases(data.text);
+            if (data.result) return formatTestCases(data.result);
+            if (data.response) return formatTestCases(data.response);
+            
+            // Format 3: return stringified output if nothing else works
+            return '<div style="color: #666;">Response received (check console for full data)</div>';
+        }
+
+        function formatTestCases(text) {
+            // Parse and format test cases for better readability
+            if (!text || typeof text !== 'string') return String(text);
+            
+            let html = '';
+            const lines = text.split('\n');
+            let currentTestCase = null;
+            let currentSection = null;
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                if (!line) {
+                    // Skip empty lines but maintain spacing
+                    continue;
+                }
+                
+                // Check if this is a test case ID (e.g., TC_001, TC_BT_001)
+                if (line.match(/^TC[_A-Z0-9]*$/i)) {
+                    if (currentTestCase) {
+                        html += '</div>';
+                    }
+                    html += `<div class="testcase-section"><div class="testcase-id">${escapeHtml(line)}</div>`;
+                    currentTestCase = line;
+                    currentSection = null;
+                } 
+                // Check if this is a section header (Title, Preconditions, Steps, Expected Results, etc.)
+                else if (line.match(/^(Title|Preconditions|Steps|Expected Results?|Test Data|Edge Cases|Postconditions|Description):/i)) {
+                    html += `<div class="testcase-label">${escapeHtml(line)}</div>`;
+                    currentSection = line;
+                } 
+                // Check if this is a numbered step (1., 2., etc.)
+                else if (line.match(/^\d+\./)) {
+                    html += `<div class="testcase-content">• ${escapeHtml(line)}</div>`;
+                } 
+                // Otherwise it's content
+                else if (line) {
+                    html += `<div class="testcase-content">${escapeHtml(line)}</div>`;
+                }
+            }
+            
+            // Close last test case
+            if (currentTestCase) {
+                html += '</div>';
+            }
+            
+            return html || '<div style="color: #999;">No test cases found in response</div>';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function addMessage(text, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            // Use innerHTML to support HTML formatting for test cases
+            if (sender === 'assistant' && text.includes('<div')) {
+                messageDiv.innerHTML = text;
+            } else {
+                messageDiv.textContent = text;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function copySampleStories() {
+            const sampleText = `As a customer, I want to transfer funds between my accounts so that I can manage my money efficiently.
+
+As a customer, I want to view my transaction history for the last 90 days so that I can track my spending.
+
+As a customer, I want to pay bills directly from my account so that I can manage my expenses conveniently.
+
+As a customer, I want to set up alerts for large transactions so that I can monitor my account security.`;
+            navigator.clipboard.writeText(sampleText).then(() => {
+                alert('All banking domain stories copied to clipboard!');
+            });
+        }
+
+        function copySingleStory(story) {
+            navigator.clipboard.writeText(story).then(() => {
+                alert('Story copied to clipboard!');
+            });
+        }
+
+        function copyOutput() {
+            const chatMessages = document.getElementById('chatMessages');
+            const allMessages = chatMessages.innerText;
+            navigator.clipboard.writeText(allMessages).then(() => {
+                alert('Chat output copied to clipboard!');
+            });
+        }
+
+        function clearChat() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '<div class="message assistant"><strong>Assistant:</strong> Welcome to the Testcase Generator! Please paste your user stories in the input area below to generate test cases.</div>';
+            document.getElementById('userInput').value = '';
+            isWaitingForResponse = false;
+        }
+
+        // Allow Enter key to send message (Shift+Enter for new line)
+        document.getElementById('userInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Initial console message
+        console.log('AI-Powered Testcase Generator loaded. Configure Langflow settings to get started.');
+    </script>
+</body>
+</html>
